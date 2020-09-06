@@ -35,12 +35,5 @@ public class Task {
     @JoinColumn(name = "userId")
     private User taskUser;
 
-    public Task(LocalDateTime taskStartDate, LocalDateTime taskEndDate, TaskCategory taskCategory, long quantity, String location, User taskUser) {
-        this.taskStartDate = taskStartDate;
-        this.taskEndDate = taskEndDate;
-        this.taskCategory = taskCategory;
-        this.quantity = quantity;
-        this.location = location;
-        this.taskUser = taskUser;
-    }
+
 }
