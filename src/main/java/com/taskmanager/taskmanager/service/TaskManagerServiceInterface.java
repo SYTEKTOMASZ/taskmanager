@@ -17,7 +17,12 @@ public interface TaskManagerServiceInterface {
     List<Task> getAllTask();
     // get all task by User ID
     Optional<Task> GetTaskById(long userID);
-
+    // get all User
+    List<User> getAllUsers();
+    // dodawanie użytkownika
+    boolean addUser(User user);
+    // nadawanie roli użytkownikowi
+    User addRoleToUser(User user, String roleName);
 
 
 }

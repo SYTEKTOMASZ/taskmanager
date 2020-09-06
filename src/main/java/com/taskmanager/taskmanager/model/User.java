@@ -20,6 +20,7 @@ public class User {
 @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
 
+@Column(unique = true)
 @NotBlank(message = "field name is mandatory")
 private String name;
 
@@ -41,7 +42,7 @@ private boolean status;
     private Set<Role> roles = new HashSet<>();
 
 
-    public User(String name, String lastName, String email, String password) {
+    public User(String name, String password) {
         this.name = name;
         this.password = password;
         this.registrationDateTime = LocalDateTime.now();
