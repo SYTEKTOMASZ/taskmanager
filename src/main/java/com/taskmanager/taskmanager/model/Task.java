@@ -14,6 +14,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Task {
 
+    public Task(long taskId, LocalDateTime taskStartDate, LocalDateTime taskEndDate, TaskCategory taskCategory, long quantity, String location, User taskUser) {
+        this.taskId = taskId;
+        this.taskStartDate = taskStartDate;
+        this.taskEndDate = taskEndDate;
+        this.taskCategory = taskCategory;
+        this.quantity = quantity;
+        this.location = location;
+        this.taskUser = taskUser;
+    }
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long taskId;
