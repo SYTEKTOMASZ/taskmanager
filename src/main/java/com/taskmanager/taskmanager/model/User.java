@@ -41,5 +41,10 @@ private boolean status;
     private Set<Role> roles = new HashSet<>();
 
 
-
+    public User(String name, String lastName, String email, String password) {
+        this.name = name;
+        this.password = password;
+        this.registrationDateTime = LocalDateTime.now();
+        this.status = true;
+    }
 }

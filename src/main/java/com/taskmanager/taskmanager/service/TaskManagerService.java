@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class TaskManagerService {
+public class TaskManagerService implements TaskManagerServiceInterface {
     private UserRepository userRepository;
     private TaskRepository taskRepository;
     private RoleRepository roleRepository;
@@ -26,21 +26,28 @@ public class TaskManagerService {
         this.roleRepository = roleRepository;
     }
 
+    @Override
+    public Task addTaskByUser(long userId, String taskName, LocalDateTime taskStartDate, LocalDateTime taskEndDate, TaskCategory taskCategory, long quantity, String location) {
+        if (userRepository.existsById(userId)){
+            User taskUser = userRepository.findById(userId).get();
+            return taskRepository.save(new Task(taskName, taskStartDate, taskEndDate, taskCategory, quantity, location, taskUser));
+        }
+        return null;
+    }
+
+    @Override
     public List<Task> getAllTask() {
 
         return taskRepository.findAll(Sort.by(Sort.Direction.DESC, "taskStartDate"));
 
     }
+    @Override
+    public Optional<Task> GetTaskById(long userId) {
 
-    public Optional<Task> GetTaskByID(long taskId) {
-
-        return taskRepository.findById(taskId);
+        return taskRepository.findById(userId);
 
     }
 
-    public Task addTaskByUser(long taskId, LocalDateTime taskStartDate, LocalDateTime taskEndDate, TaskCategory taskCategory, long quantity, String location, User taskUser) {
-        return taskRepository.save(new Task(taskId, taskStartDate, taskEndDate, taskCategory, quantity, location, taskUser));
-    }
 
 
 }
