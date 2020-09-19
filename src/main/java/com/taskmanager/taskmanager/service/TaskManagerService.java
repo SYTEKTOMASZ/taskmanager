@@ -6,6 +6,7 @@ import com.taskmanager.taskmanager.model.TaskCategory;
 import com.taskmanager.taskmanager.model.User;
 import com.taskmanager.taskmanager.repository.RoleRepository;
 import com.taskmanager.taskmanager.repository.UserRepository;
+import com.taskmanager.taskmanager.repository.TaskCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 //import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,20 +23,26 @@ public class TaskManagerService implements TaskManagerServiceInterface {
     private UserRepository userRepository;
     private TaskRepository taskRepository;
     private RoleRepository roleRepository;
+    private TaskCategoryRepository taskCategoryRepository;
 
     @Autowired
-    public TaskManagerService(UserRepository userRepository, TaskRepository taskRepository, RoleRepository roleRepository) {
+    public TaskManagerService(UserRepository userRepository, TaskRepository taskRepository, RoleRepository roleRepository,TaskCategoryRepository taskCategoryRepository) {
         this.userRepository = userRepository;
         this.taskRepository = taskRepository;
         this.roleRepository = roleRepository;
+        this.taskCategoryRepository = taskCategoryRepository;
     }
 
     @Override
-    public Task addTaskByUser(long userId, String taskName, LocalDateTime taskStartDate, LocalDateTime taskEndDate, TaskCategory taskCategory, long quantity, String location) {
+    public Task addTaskByUser(long userId, String taskName, LocalDateTime taskStartDate, LocalDateTime taskEndDate, String taskCategoryName, long quantity, String location) {
         if (userRepository.existsById(userId)) {
             User taskUser = userRepository.findById(userId).get();
-            return taskRepository.save(new Task(taskName, taskStartDate, taskEndDate, taskCategory, quantity, location, taskUser));
-        }
+            if(taskCategoryRepository.findFirstByCategoryName(taskCategoryName)!=null) {
+                TaskCategory taskCategory = taskCategoryRepository.findById(taskCategoryRepository.findFirstByCategoryName(taskCategoryName).getCategoryId()).get();
+                return taskRepository.save(new Task(taskName, taskStartDate, taskEndDate, taskCategory, quantity, location, taskUser));
+            }
+            return null;
+            }
         return null;
     }
 
@@ -47,9 +54,9 @@ public class TaskManagerService implements TaskManagerServiceInterface {
     }
 
     @Override
-    public Optional<Task> GetTaskById(long userId) {
+    public List<Task> getTaskByUser(long userId) {
 
-        return taskRepository.findById(userId);
+        return taskRepository.findAllByTaskUser(userRepository.findById(userId).get());
 
     }
 
@@ -75,6 +82,23 @@ public class TaskManagerService implements TaskManagerServiceInterface {
         user.getRoles().add(role);
         return user;
 
+
+    }
+
+    @Override
+    public boolean addTaskCategory(TaskCategory taskCategory) {
+        if (taskCategoryRepository.findFirstByCategoryName(taskCategory.getCategoryName()) == null) {
+            taskCategoryRepository.save(taskCategory);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public List<Task> getTaskByTaskUserAndTaskCategory(long userId, String taskCategoryName) {
+
+        return taskRepository.findAllByTaskUserAndTaskCategory(userRepository.findById(userId).get(),taskCategoryRepository.findById(taskCategoryRepository.findFirstByCategoryName(taskCategoryName).getCategoryId()).get());
 
     }
 }

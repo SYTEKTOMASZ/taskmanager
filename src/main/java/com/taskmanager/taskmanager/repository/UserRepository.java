@@ -11,5 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // SELECT * FROM user WHERE user.email = ? LIMIT 1
     User findFirstByName(String name);
 
+
 }
 

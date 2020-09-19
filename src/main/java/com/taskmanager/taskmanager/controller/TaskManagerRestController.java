@@ -4,16 +4,13 @@ import com.taskmanager.taskmanager.model.Task;
 import com.taskmanager.taskmanager.model.TaskCategory;
 import com.taskmanager.taskmanager.model.User;
 import com.taskmanager.taskmanager.service.TaskManagerService;
-import jdk.jfr.Category;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.datetime.joda.LocalDateParser;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/rest")
@@ -41,10 +38,10 @@ public class TaskManagerRestController {
             @RequestParam("taskName") String taskName,
             @RequestParam("taskStartDate") String taskStartDate,
             @RequestParam("taskEndDate") String taskEndDate,
-            @RequestParam("taskCategory") TaskCategory taskCategory,
+            @RequestParam("taskCategory") String taskCategoryName,
             @RequestParam("quantity") Long quantity,
             @RequestParam("location") String location) {
-        DateTimeFormatter FOMATTER = DateTimeFormatter.ofPattern("yyyy-dd-MM HH:mm");
+        DateTimeFormatter FOMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime start_date = LocalDateTime.parse(taskStartDate, FOMATTER);
         LocalDateTime stop_date = LocalDateTime.parse(taskEndDate, FOMATTER);
         System.out.println("FORMATTER: " + start_date);
@@ -53,7 +50,7 @@ public class TaskManagerRestController {
                 taskName,
                 start_date,
                 stop_date,
-                taskCategory,
+                taskCategoryName,
                 quantity,
                 location);
     }
@@ -70,6 +67,31 @@ public class TaskManagerRestController {
     ){
         return taskManagerService.addUser(new User(name, passowrd));
     }
+
+    @PostMapping("/addTaskCategorry")
+    public boolean addTaskCategory(
+            @RequestParam("categoryName") String categoryName
+    ){
+        return taskManagerService.addTaskCategory(new TaskCategory(categoryName));
+
+    }
+
+    @GetMapping("/tasks/{userId}")
+    public List<Task> getTaskByUser(
+            @PathVariable("userId") long userId
+    ){
+        return taskManagerService.getTaskByUser(userId);
+    }
+
+    @GetMapping("/tasks/{userId}/{taskCategoryName}")
+    public List<Task> getTaskByIdAndTaskCategory(
+            @PathVariable("userId") long userId,
+            @PathVariable("taskCategoryName") String taskCategoryName
+    ){
+        return taskManagerService.getTaskByTaskUserAndTaskCategory(userId, taskCategoryName) ;
+    }
+
+
 
 
 
